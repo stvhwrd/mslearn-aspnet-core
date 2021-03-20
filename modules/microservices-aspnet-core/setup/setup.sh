@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Hi!
-# If you're reading this, you're probably interested in what's 
+# If you're reading this, you're probably interested in what's
 # going on within this script. We've provided what we hope are useful
 # comments inline, as well as color-coded relevant shell output.
 # We hope it's useful for you, but if you have any questions or suggestions
-# please open an issue on https:/github.com/MicrosoftDocs/mslearn-aspnet-core.
+# please open an issue on https:/github.com/stvhwrd/mslearn-aspnet-core.
 #
 
 ## Start
@@ -19,7 +19,7 @@ declare moduleName="microservices-aspnet-core"
 
 # Any other declarations we need
 declare -x gitBranch="live"
-declare initScript=https://raw.githubusercontent.com/MicrosoftDocs/mslearn-aspnet-core/$gitBranch/infrastructure/scripts/initenvironment.sh
+declare initScript=https://raw.githubusercontent.com/stvhwrd/mslearn-aspnet-core/$gitBranch/infrastructure/scripts/initenvironment.sh
 declare suppressAzureResources=true
 declare rootLocation=~/clouddrive
 declare editorHomeLocation=$rootLocation/aspnet-learn/src
@@ -51,7 +51,7 @@ else
     # Mitigation for https://github.com/Azure/azure-cli/issues/14915
     echo "Enabling Azure CLI aks-preview extension..."
     az extension add --name aks-preview --only-show-errors
-    echo 
+    echo
 
     # Run eshop-learn quickstart to deploy to AKS
     $editorHomeLocation/deploy/k8s/quickstart.sh --resource-group eshop-learn-rg --location westus
@@ -67,4 +67,3 @@ else
     # Display URLs to user
     cat ~/clouddrive/aspnet-learn/deployment-urls.txt
 fi
-
