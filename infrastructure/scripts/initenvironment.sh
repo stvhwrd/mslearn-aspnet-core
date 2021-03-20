@@ -3,19 +3,16 @@
 # scriptPath
 # projectRootDirectory
 
-
-
 # Common Declarations
-declare scriptPath=https://raw.githubusercontent.com/MicrosoftDocs/mslearn-aspnet-core/$gitBranch/infrastructure/scripts
+declare scriptPath=https://raw.githubusercontent.com/stvhwrd/mslearn-aspnet-core/$gitBranch/infrastructure/scripts
 declare provisioningPath=$scriptPath/provisioning
 declare toolsPath=$scriptPath/tools
 declare dotnetScriptsPath=$scriptPath/dotnet
-declare binariesPath=https://raw.githubusercontent.com/MicrosoftDocs/mslearn-aspnet-core/$gitBranch/infrastructure/binaries
+declare binariesPath=https://raw.githubusercontent.com/stvhwrd/mslearn-aspnet-core/$gitBranch/infrastructure/binaries
 declare instanceId=$(($RANDOM * $RANDOM))
 declare gitDirectoriesToClone="modules/$moduleName/setup/ modules/$moduleName/src/"
-declare gitPathToCloneScript=https://raw.githubusercontent.com/MicrosoftDocs/mslearn-aspnet-core/$gitBranch/infrastructure/scripts/sparsecheckout.sh
-if ! [ $rootLocation ]
-then
+declare gitPathToCloneScript=https://raw.githubusercontent.com/stvhwrd/mslearn-aspnet-core/$gitBranch/infrastructure/scripts/sparsecheckout.sh
+if ! [ $rootLocation ]; then
     declare rootLocation=~
 fi
 declare srcWorkingDirectory=$rootLocation/aspnet-learn/src
@@ -62,8 +59,8 @@ setAzureCliDefaults() {
     (
         set -x
         az configure --defaults \
-            group=$resourceGroupName \
-            location=$defaultLocation
+        group=$resourceGroupName \
+        location=$defaultLocation
     )
 }
 resetAzureCliDefaults() {
@@ -71,16 +68,15 @@ resetAzureCliDefaults() {
     (
         set -x
         az configure --defaults \
-            group= \
-            location=
+        group= \
+        location=
     )
 }
 configureDotNetCli() {
     echo "${newline}${headingStyle}Configuring the .NET CLI...${defaultTextStyle}"
     declare installedDotNet=$(dotnet --version)
 
-    if [ "$dotnetSdkVersion" != "$installedDotNet" ];
-    then
+    if [ "$dotnetSdkVersion" != "$installedDotNet" ]; then
         # Install .NET SDK
         wget -q -O - https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --version $dotnetSdkVersion
     fi
@@ -93,48 +89,48 @@ configureDotNetCli() {
     # named file on disk.
     touch ~/.dotnet/$dotnetSdkVersion.dotnetFirstUseSentinel
 
-    # Suppress priming the NuGet package cache with assemblies and 
+    # Suppress priming the NuGet package cache with assemblies and
     # XML docs we won't need.
     export NUGET_XMLDOC_MODE=skip
-    echo "export NUGET_XMLDOC_MODE=skip" >> ~/.bashrc
-    
+    echo "export NUGET_XMLDOC_MODE=skip" >>~/.bashrc
+
     # Disable the sending of telemetry to the mothership.
     export DOTNET_CLI_TELEMETRY_OPTOUT=true
-    echo "export DOTNET_CLI_TELEMETRY_OPTOUT=true" >> ~/.bashrc
+    echo "export DOTNET_CLI_TELEMETRY_OPTOUT=true" >>~/.bashrc
 
     # Disable add'l welcome messages and logo stuff
     export DOTNET_NOLOGO=true
-    echo "export DOTNET_NOLOGO=true" >> ~/.bashrc
+    echo "export DOTNET_NOLOGO=true" >>~/.bashrc
 
     # Add tab completion for .NET CLI
     tabSlug="#dotnet-tab-completion"
     tabScript=$dotnetScriptsPath/tabcomplete.sh
     if ! [[ $(grep $tabSlug ~/.bashrc) ]]; then
-        echo $tabSlug >> ~/.bashrc
-        wget -q -O - $tabScript >> ~/.bashrc
+        echo $tabSlug >>~/.bashrc
+        wget -q -O - $tabScript >>~/.bashrc
         . <(wget -q -O - $tabScript)
     fi
-    
+
     # Generate developer certificate so ASP.NET Core projects run without complaint
     dotnet dev-certs https --quiet
 }
 setPathEnvironmentVariableForDotNet() {
     # Add a note to .bashrc in case someone is running this in their own Cloud Shell
-    echo "# The following was added by Microsoft Learn $moduleName" >> ~/.bashrc
+    echo "# The following was added by Microsoft Learn $moduleName" >>~/.bashrc
 
     # Add .NET SDK and .NET Global Tools default installation directory to PATH
-    if ! [ $(echo $PATH | grep .dotnet) ]; then 
-        export PATH=~/.dotnet:~/.dotnet/tools:$PATH; 
-        echo "# Add custom .NET SDK to PATH" >> ~/.bashrc
-        echo "export PATH=~/.dotnet:~/.dotnet/tools:\$PATH;" >> ~/.bashrc
+    if ! [ $(echo $PATH | grep .dotnet) ]; then
+        export PATH=~/.dotnet:~/.dotnet/tools:$PATH
+        echo "# Add custom .NET SDK to PATH" >>~/.bashrc
+        echo "export PATH=~/.dotnet:~/.dotnet/tools:\$PATH;" >>~/.bashrc
     fi
 }
 setDotnetRootEnvironmentVariable() {
     # Add .NET Global Tools directory variable
-    if ! [ $(echo $DOTNET_ROOT | grep .dotnet) ]; then 
+    if ! [ $(echo $DOTNET_ROOT | grep .dotnet) ]; then
         export DOTNET_ROOT=~/.dotnet
-        echo "# Add DOTNET_ROOT variable" >> ~/.bashrc
-        echo "export DOTNET_ROOT=~/.dotnet" >> ~/.bashrc
+        echo "# Add DOTNET_ROOT variable" >>~/.bashrc
+        echo "export DOTNET_ROOT=~/.dotnet" >>~/.bashrc
     fi
 }
 downloadStarterApp() {
@@ -143,9 +139,9 @@ downloadStarterApp() {
         cd $rootLocation
 
         # Set global Git config variables
-        git config --global user.name "Microsoft Learn Student"
-        git config --global user.email learn@contoso.com
-        
+        git config --global user.name "Stevie Howard"
+        git config --global user.email "stvhwrd@outlook.com"
+
         # Download the sample project, restore NuGet packages, and build
         echo "${newline}${headingStyle}Downloading code...${defaultTextStyle}"
         (
@@ -193,16 +189,16 @@ provisionResourceGroup() {
             echo "${newline}${headingStyle}Provisioning Azure Resource Group...${azCliCommandStyle}"
             set -x
             az group create \
-                --name $resourceGroupName \
-                --output none
+            --name $resourceGroupName \
+            --output none
         )
     fi
 }
 addVariablesToStartup() {
     if ! [[ $(grep $variableScript ~/.bashrc) ]]; then
-        echo "${newline}# Next line added at $(date) by Microsoft Learn $moduleName" >> ~/.bashrc
-        echo ". ~/$variableScript" >> ~/.bashrc
-    fi 
+        echo "${newline}# Next line added at $(date) by Microsoft Learn $moduleName" >>~/.bashrc
+        echo ". ~/$variableScript" >>~/.bashrc
+    fi
 }
 displayGreeting() {
     # Set location
@@ -212,7 +208,7 @@ displayGreeting() {
     if ! [ "$suppressConfigureDotNet" ]; then
         echo "${defaultTextStyle}Using .NET SDK version ${headingStyle}$dotnetSdkVersion${defaultTextStyle}"
     fi
-    
+
     # Install .NET global tool to display connection info
     dotnet tool install dotnetsay --global --version 2.1.7 --verbosity quiet
 
@@ -239,12 +235,11 @@ determineResourceGroup() {
 
     # If there is more than one RG or there's only one but its name is not a GUID,
     # we're probably not in the Learn sandbox.
-    if ! [ $existingResourceGroup ]
-    then
+    if ! [ $existingResourceGroup ]; then
         echo "${warningStyle}WARNING!!!" \
-            "It appears you aren't currently running in a Microsoft Learn sandbox." \
-            "Any Azure resources provisioned by this script will result in charges" \
-            "to your Azure subscription.${defaultTextStyle}"
+        "It appears you aren't currently running in a Microsoft Learn sandbox." \
+        "Any Azure resources provisioned by this script will result in charges" \
+        "to your Azure subscription.${defaultTextStyle}"
         resourceGroupName=$moduleName
     else
         resourceGroupName=$existingResourceGroup
@@ -254,17 +249,19 @@ determineResourceGroup() {
 }
 checkForCloudShell() {
     # Check to make sure we're in Azure Cloud Shell
-    if [ "${AZURE_HTTP_USER_AGENT:0:11}" != "cloud-shell" ]
-    then
+    if [ "${AZURE_HTTP_USER_AGENT:0:11}" != "cloud-shell" ]; then
         echo "${warningStyle}WARNING!!!" \
-            "It appears you aren't running this script in an instance of Azure Cloud Shell." \
-            "This script was designed for the environment in Azure Cloud Shell, and we can make no promises that it'll function as intended anywhere else." \
-            "Please only proceed if you know what you're doing.${newline}${newline}" \
-            "Do you know what you're doing?${defaultTextStyle}"
+        "It appears you aren't running this script in an instance of Azure Cloud Shell." \
+        "This script was designed for the environment in Azure Cloud Shell, and we can make no promises that it'll function as intended anywhere else." \
+        "Please only proceed if you know what you're doing.${newline}${newline}" \
+        "Do you know what you're doing?${defaultTextStyle}"
         select yn in "Yes" "No"; do
             case $yn in
-                Yes ) break;;
-                No ) echo "${warningStyle}Please let us know that you saw this message using the feedback links provided.${defaultTextStyle}"; return 0;;
+            Yes) break ;;
+            No)
+                echo "${warningStyle}Please let us know that you saw this message using the feedback links provided.${defaultTextStyle}"
+                return 0
+                ;;
             esac
         done
     fi
@@ -275,7 +272,6 @@ cleanupTempFiles() {
     rm $appIdTempFile
     rm $instrumentationKeyTempFile
 }
-
 
 # Load the theme
 declare themeScript=$scriptPath/theme.sh
